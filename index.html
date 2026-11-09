@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XAUUSD Footprint</title>
+    <style>
+        body { background: #121212; color: #fff; font-family: -apple-system, sans-serif; padding: 15px; margin: 0; }
+        h2 { font-size: 18px; margin-bottom: 10px; color: #f3ba2f; }
+        .card { background: #1e1e1e; padding: 12px; border-radius: 8px; margin-bottom: 10px; }
+        .row { display: flex; justify-content: space-between; margin: 5px 0; font-size: 14px; }
+        #status { font-size: 12px; color: #888; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <h2>XAUUSD Order Flow / Footprint</h2>
+    <div id="status">Connecting to server...</div>
+    <div class="card" id="data">
+        <div class="row"><span>Time:</span> <span id="t">-</span></div>
+        <div class="row"><span>Open:</span> <span id="o">-</span></div>
+        <div class="row"><span>High:</span> <span id="h">-</span></div>
+        <div class="row"><span>Low:</span> <span id="l">-</span></div>
+        <div class="row"><span>Close:</span> <span id="c">-</span></div>
+        <div class="row"><span>Buy Vol:</span> <span id="b" style="color: #0ecb81;">-</span></div>
+        <div class="row"><span>Sell Vol:</span> <span id="s" style="color: #f6465d;">-</span></div>
+        <div class="row"><span>Delta:</span> <span id="d">-</span></div>
+        <div class="row"><span>POC:</span> <span id="poc">-</span></div>
+    </div>
+
+    <script>
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const ws = new WebSocket(`${protocol}//${window.location.host}`);
+        
+        ws.onopen = () => document.getElementById('status').innerText = 'Status: Connected & Live';
+        ws.onclose = () => document.getElementById('status').innerText = 'Status: Disconnected';
+        
+        ws.onmessage = (event) => {
+            const d = JSON.parse(event.data);
+            document.getElementById('t').innerText = new Date(d.time * 1000).toLocaleTimeString();
+            document.getElementById('o').innerText = d.open;
+            document.getElementById('h').innerText = d.high;
+            document.getElementById('l').innerText = d.low;
+            document.getElementById('c').innerText = d.close;
+            document.getElementById('b').innerText = d.buy;
+            document.getElementById('s').innerText = d.sell;
+            document.getElementById('d').innerText = d.delta;
+            document.getElementById('poc').innerText = d.poc;
+        };
+    </script>
+</body>
+</html>
